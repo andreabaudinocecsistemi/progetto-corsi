@@ -11,6 +11,7 @@ public class Main {
 		FrameBase frame = new FrameBase();
 		frame.start();
 		
-		frame.setVisible(true);
+		frame.setVisible(false);
 	}
 }
+
