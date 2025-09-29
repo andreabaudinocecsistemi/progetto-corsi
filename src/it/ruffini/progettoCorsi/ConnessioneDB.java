@@ -43,9 +43,9 @@ public class ConnessioneDB {
 		return result;
 	}
 	
-	public static List<String> getAnagrafiche() {
+	public static List<Anagrafiche> getAnagrafiche() {
 		
-		List<String> result = new ArrayList<>();
+		List<Anagrafiche> result = new ArrayList<>();
 		
 		String query = "SELECT * FROM anagrafiche";
 		
@@ -55,7 +55,16 @@ public class ConnessioneDB {
 			ResultSet rs = stmt.executeQuery(query);
 			
 			while (rs.next()) {
-				result.add(rs.getString("cognome") + rs.getString("nome") + rs.getString("codice_fiscale"));
+				Anagrafiche anagrafica = new Anagrafiche();
+				anagrafica.setId(rs.getInt("id"));
+				anagrafica.setNome(rs.getString("nome"));
+				anagrafica.setCognome(rs.getString("cognome"));
+				anagrafica.setCodiceFiscale(rs.getString("codice_fiscale"));
+				anagrafica.setDataNascita(rs.getDate("data_nascita"));
+				anagrafica.setEmail(rs.getString("email"));
+				anagrafica.setCittaNascita(rs.getString("città_nascita"));
+				anagrafica.setNumeroTelefono(rs.getLong("numero_telefono"));
+				result.add(anagrafica);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

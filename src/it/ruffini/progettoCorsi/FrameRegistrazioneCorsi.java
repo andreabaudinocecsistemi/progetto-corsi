@@ -40,15 +40,17 @@ public class FrameRegistrazioneCorsi extends JFrame {
 		}
 		
 		JLabel labelAnagrafiche = new JLabel("Anagrafica selezionata");
-		List<String> opzioniAnagrafiche = ConnessioneDB.getAnagrafiche();
+		List<Anagrafiche> opzioniAnagrafiche = ConnessioneDB.getAnagrafiche();
 		
-		JComboBox<String> comboAnagrafiche = new JComboBox<>();
-		comboAnagrafiche.setMaximumSize(new Dimension(150,25));
+		JComboBox<Anagrafiche> comboAnagrafiche = new JComboBox<>();
+		comboAnagrafiche.setMaximumSize(new Dimension(250,25));
 		
 		if (opzioniAnagrafiche.isEmpty()) {
-			comboAnagrafiche.addItem("Nessuna persona trovata");
+			Anagrafiche erroreAnagrafiche = new Anagrafiche();
+			erroreAnagrafiche.setNome("Nessuna persona trovata");
+			comboAnagrafiche.addItem(erroreAnagrafiche);
 		} else {
-			for (String nominativo : opzioniAnagrafiche ) {
+			for (Anagrafiche nominativo : opzioniAnagrafiche ) {
 				comboAnagrafiche.addItem(nominativo);
 			}
 		}
@@ -81,7 +83,13 @@ public class FrameRegistrazioneCorsi extends JFrame {
 		add(panel, BorderLayout.CENTER);
 		
 		effettuaRegistrazione.addActionListener(click -> {
+			Corsi corsoSelezionato = (Corsi)comboCorsi.getSelectedItem();
+			Anagrafiche anagraficaSelezionata = (Anagrafiche)comboAnagrafiche.getSelectedItem();
+			StatiPartecipazione statoSelezionato = (StatiPartecipazione)comboStatiPartecipazione.getSelectedItem();
 			
+			Integer idCorso = corsoSelezionato.getId();
+			Integer idAnagrafica = anagraficaSelezionata.getId();
+			Integer idStato = statoSelezionato.getId();
 		});
 	}
 
