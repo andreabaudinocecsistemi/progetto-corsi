@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class FrameRegistrazioneCorsi extends JFrame {
@@ -23,7 +24,7 @@ public class FrameRegistrazioneCorsi extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		
-		JLabel labelCorsi = new JLabel("Corso selezionato");
+		JLabel labelCorsi = new JLabel("Corsi con iscrizioni aperte");
 		List<Corsi> opzioni = ConnessioneDB.getTitoloCorsi();
 		
 		JComboBox<Corsi> comboCorsi = new JComboBox<>();
@@ -40,15 +41,17 @@ public class FrameRegistrazioneCorsi extends JFrame {
 		}
 		
 		JLabel labelAnagrafiche = new JLabel("Anagrafica selezionata");
-		List<String> opzioniAnagrafiche = ConnessioneDB.getAnagrafiche();
+		List<Anagrafiche> opzioniAnagrafiche = ConnessioneDB.getAnagrafiche();
 		
-		JComboBox<String> comboAnagrafiche = new JComboBox<>();
-		comboAnagrafiche.setMaximumSize(new Dimension(150,25));
+		JComboBox<Anagrafiche> comboAnagrafiche = new JComboBox<>();
+		comboAnagrafiche.setMaximumSize(new Dimension(250,25));
 		
 		if (opzioniAnagrafiche.isEmpty()) {
-			comboAnagrafiche.addItem("Nessuna persona trovata");
+			Anagrafiche erroreAnagrafiche = new Anagrafiche();
+			erroreAnagrafiche.setNome("Nessuna persona trovata");
+			comboAnagrafiche.addItem(erroreAnagrafiche);
 		} else {
-			for (String nominativo : opzioniAnagrafiche ) {
+			for (Anagrafiche nominativo : opzioniAnagrafiche ) {
 				comboAnagrafiche.addItem(nominativo);
 			}
 		}
@@ -81,7 +84,21 @@ public class FrameRegistrazioneCorsi extends JFrame {
 		add(panel, BorderLayout.CENTER);
 		
 		effettuaRegistrazione.addActionListener(click -> {
+			Corsi corsoSelezionato = (Corsi)comboCorsi.getSelectedItem();
+			Anagrafiche anagraficaSelezionata = (Anagrafiche)comboAnagrafiche.getSelectedItem();
+			StatiPartecipazione statoSelezionato = (StatiPartecipazione)comboStatiPartecipazione.getSelectedItem();
 			
+			Integer idCorso = corsoSelezionato.getId();
+			Integer idAnagrafica = anagraficaSelezionata.getId();
+			Integer idStato = statoSelezionato.getId();
+			
+			boolean esitoRegistrazioneCorsi = ConnessioneDB.effettuaRegistrazione(idCorso, idAnagrafica, idStato);
+			if (esitoRegistrazioneCorsi == true) {
+				JOptionPane.showMessageDialog(this, "Utente " + anagraficaSelezionata.stringaPerMessaggio() + " " + 
+												statoSelezionato.getDescrizione() + " al corso di " + corsoSelezionato.getTitolo());
+			} else {
+				JOptionPane.showMessageDialog(this, "Errore di registrazione per l' utente " + anagraficaSelezionata.stringaPerMessaggio());
+			}
 		});
 	}
 

@@ -23,7 +23,7 @@ public class ConnessioneDB {
 	public static List<Corsi> getTitoloCorsi() {
 		List<Corsi> result = new ArrayList<>();
 		
-		String query = "Select * from corsi";
+		String query = "Select * from corsi where stato != 2";
 		
 		try {
 			Connection conn = getConnection();
@@ -43,9 +43,9 @@ public class ConnessioneDB {
 		return result;
 	}
 	
-	public static List<String> getAnagrafiche() {
+	public static List<Anagrafiche> getAnagrafiche() {
 		
-		List<String> result = new ArrayList<>();
+		List<Anagrafiche> result = new ArrayList<>();
 		
 		String query = "SELECT * FROM anagrafiche";
 		
@@ -55,7 +55,16 @@ public class ConnessioneDB {
 			ResultSet rs = stmt.executeQuery(query);
 			
 			while (rs.next()) {
-				result.add(rs.getString("cognome") + rs.getString("nome") + rs.getString("codice_fiscale"));
+				Anagrafiche anagrafica = new Anagrafiche();
+				anagrafica.setId(rs.getInt("id"));
+				anagrafica.setNome(rs.getString("nome"));
+				anagrafica.setCognome(rs.getString("cognome"));
+				anagrafica.setCodiceFiscale(rs.getString("codice_fiscale"));
+				anagrafica.setDataNascita(rs.getDate("data_nascita"));
+				anagrafica.setEmail(rs.getString("email"));
+				anagrafica.setCittaNascita(rs.getString("città_nascita"));
+				anagrafica.setNumeroTelefono(rs.getLong("numero_telefono"));
+				result.add(anagrafica);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -137,6 +146,24 @@ public class ConnessioneDB {
 			stmt.setString(1, username);
 			stmt.setString(2, password);
 			stmt.setString(3, email);
+			stmt.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static boolean effettuaRegistrazione(Integer idCorso, Integer idAnagrafica, Integer idStato) {
+		
+		String query = "INSERT INTO `partecipazioni`(`id_corso`, `id_anagrafica`, `id_stato_partecipazione`) VALUES (?,?,?)";
+		
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setInt(1, idCorso);
+			stmt.setInt(2, idAnagrafica);
+			stmt.setInt(3, idStato);
 			stmt.executeUpdate();
 			return true;
 		} catch (SQLException e) {
