@@ -65,5 +65,9 @@ public class Anagrafiche {
 	public String toString() {
 		return this.nome + " " + this.cognome + " " + this.codiceFiscale;
 	}
+	
+	public String stringaPerMessaggio() {
+		return this.nome + " " + this.cognome;
+	}
 
 }
